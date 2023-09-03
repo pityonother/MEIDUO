@@ -19,9 +19,11 @@ from django.urls import path
 from django.http import HttpResponse
 def log(request):
     return  HttpResponse('log')
-
+from django.urls import re_path
+from django.urls import include
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(r'log/',log)
+    path(r'log/',log),
+    re_path(r'^',include(('apps.users.urls','users'),namespace='users')),
 ]
 
