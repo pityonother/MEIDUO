@@ -27,7 +27,8 @@ SECRET_KEY = "django-insecure-a9d$cqrl_y%xr^gd56%tm$j53hc!5tcikq8!$rmcjtdp_zq$ti
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.meiduo.site', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'apps.users',
 ]
 
 MIDDLEWARE = [
@@ -204,3 +206,10 @@ logger=logging.getLogger('django')
 logger.debug('测试logging模块debug')
 logger.info('测试logging模块info')
 logger.error('测试logging模块error')
+
+from django.urls import re_path
+from django.urls import include
+urlpatterns=[
+   # re_path(r'^admin/',admin.site.urls),
+    re_path(r'^',include('apps.users.urls',namespace='users')),
+]
