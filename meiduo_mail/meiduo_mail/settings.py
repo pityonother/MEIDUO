@@ -207,7 +207,4 @@ logger.debug('测试logging模块debug')
 logger.info('测试logging模块info')
 logger.error('测试logging模块error')
 
-from django.urls import re_path
-from django.urls import include
-from os import path
-
+AUTH_USER_MODEL='users.User'
