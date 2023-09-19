@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse
+from django.http import JsonResponse
 
 import logging
 from django.views import View
@@ -40,6 +41,16 @@ class RegisterView(View):
         from django.contrib.auth import login
         login(request,user)
         return redirect(reverse('contents:index'))
+class UsernameCountView(View):
+    def get(self,request,username):
+        try:
+            count=User.objects.filter(username=username).count()
+        except Exception as e:
+            logger.error(e)
+            return JsonResponse({'code':400,'errmsg':'数据库异常'})
+        return JsonResponse({'code':0,'count':count})
+
+
 
 
 
