@@ -25,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path(r'log/',log),
     re_path(r'^',include(('apps.users.urls','users'),namespace='users')),
-    re_path(r'^',include(('apps.contents.urls','contents'),namespace='contents'))
+    re_path(r'^',include(('apps.contents.urls','contents'),namespace='contents')),
+    re_path(r'^',include(('apps.verifications.urls','verifications'),namespace='verifications')),
 ]
 

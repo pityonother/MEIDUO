@@ -21,6 +21,7 @@ class RegisterView(View):
         password2=data.get('password2')
         mobile=data.get('mobile')
         allow=data.get('allow')
+        print(type(allow))
         if not all([username,password,password2,mobile]):
             return HttpResponse('参数有问题')
         if not re.match(r'[0-9a-zA-Z_]{5,20}',username):
@@ -31,7 +32,7 @@ class RegisterView(View):
             return HttpResponse('重复密码不符合规范',status=400)
         if not re.match(r'1[3-9]\d{9}',mobile):
             return HttpResponse('手机号不符合规则',status=400)
-        if allow=='None':
+        if allow==None:
             return HttpResponse('请勾选用户使用协议',status=400)
         try:
             user=User.objects.create_user(username=username,password=password,mobile=mobile)
@@ -44,7 +45,7 @@ class RegisterView(View):
 class UsernameCountView(View):
     def get(self,request,username):
         try:
-            count=User.objects.filter(username=username).count()
+          count=User.objects.filter(username=username).count()
         except Exception as e:
             logger.error(e)
             return JsonResponse({'code':400,'errmsg':'数据库异常'})
