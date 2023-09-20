@@ -43,7 +43,9 @@ class SmsCodeView(View):
         pipe.setex('sms_%s'%mobile,SMS_CODE_EXPIRE_TIME,sms_code)
         pipe.setex('send_flag_%s'%mobile,60,1)
         pipe.execute()
-        CCP().send_template_sms(mobile,[sms_code,5],1)
+        #CCP().send_template_sms(mobile,[sms_code,5],1)
+        from celery_tasks.sms.tasks import send_sms_code
+        send_sms_code.delay(mobile,sms_code)
         return http.JsonResponse({'code':RETCODE.OK,'errmsg':'ok'})
 
 
