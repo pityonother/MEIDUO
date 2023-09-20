@@ -17,10 +17,10 @@ class ImageCodeView(View):
 
 class SmsCodeView(View):
     def get(self,request,mobile):
-        image_code=request.GET.get('imagecode')
-        uuid=request.GET.get('uuid')
+        image_code=request.GET.get('image_code')
+        uuid=request.GET.get('image_code_id')
         if not all([mobile,image_code,uuid]):
-            return http.JsonResponse({'code':RETCODE.NECESSARYPARAMERR,'errormsg':'参数不齐'})
+            return http.JsonResponse({'code':RETCODE.NECESSARYPARAMERR,'errmsg':'参数不齐'})
         redis_conn=get_redis_connection('code')
         redis_code=redis_conn.get('img_%s'%mobile)
         if redis_code is None:
