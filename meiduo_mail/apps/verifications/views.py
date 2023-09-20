@@ -34,9 +34,15 @@ class SmsCodeView(View):
             return http.JsonResponse({'code':RETCODE.DBERR,'errmsg':'redis有异常'})
         if redis_code.decode().lower()!=image_code.lower():
             return  http.JsonResponse({'code':RETCODE.SMSCODERR,'errmsg':'图片验证码错误'})
+        send_flag=redis_conn.get('send_flag_%s'%mobile)
+        if send_flag:
+            return http.JsonResponse({'code':RETCODE.THROTTLINGERR,'errmsg':'操作太频繁'})
         from random import randint
         sms_code=randint(1000,9999)
-        redis_conn.setex('sms_%s'%mobile,SMS_CODE_EXPIRE_TIME,sms_code)
+        pipe=redis_conn.pipeline()
+        pipe.setex('sms_%s'%mobile,SMS_CODE_EXPIRE_TIME,sms_code)
+        pipe.setex('send_flag_%s'%mobile,60,1)
+        pipe.execute()
         CCP().send_template_sms(mobile,[sms_code,5],1)
         return http.JsonResponse({'code':RETCODE.OK,'errmsg':'ok'})
 
