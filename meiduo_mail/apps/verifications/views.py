@@ -8,6 +8,8 @@ from django import http
 from .constants import IMAGE_CODE_EXPIRE_TIME,SMS_CODE_EXPIRE_TIME
 from utils.response_code import RETCODE
 from libs.yuntongxun.sms import CCP
+import logging
+logger=logging.getLogger('django')
 class ImageCodeView(View):
     def get(self,request,uuid):
         text,image=captcha.generate_captcha()
@@ -21,11 +23,16 @@ class SmsCodeView(View):
         uuid=request.GET.get('image_code_id')
         if not all([mobile,image_code,uuid]):
             return http.JsonResponse({'code':RETCODE.NECESSARYPARAMERR,'errmsg':'参数不齐'})
-        redis_conn=get_redis_connection('code')
-        redis_code=redis_conn.get('img_%s'%mobile)
-        if redis_code is None:
-            return http.JsonResponse({'code':RETCODE.Timeout,'errmsg':'验证码过期'})
-        if redis_code!=image_code:
+        try:
+            redis_conn=get_redis_connection('code')
+            redis_code=redis_conn.get('img_%s'%uuid)
+            if redis_code is None:
+                return http.JsonResponse({'code':RETCODE.Timeout,'errmsg':'验证码过期'})
+            redis_conn.delete('img_%s'%uuid)
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code':RETCODE.DBERR,'errmsg':'redis有异常'})
+        if redis_code.decode().lower()!=image_code.lower():
             return  http.JsonResponse({'code':RETCODE.SMSCODERR,'errmsg':'图片验证码错误'})
         from random import randint
         sms_code=randint(1000,9999)
